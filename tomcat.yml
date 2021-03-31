@@ -1,0 +1,40 @@
+---
+- name: install and configure Tomcat
+  hosts: sgabs_web_2
+  gather_facts: false
+  become: yes
+ 
+  vars:
+    - tomcat_vars
+     
+  tasks:
+  - name: Updating apt
+    command: apt-get update
+      
+  - name: Installing required java
+    yum:
+      name: java-1.8.0-openjdk
+      state: present
+
+  - name: Setting default java
+    alternatives:
+      name: java
+      link: /usr/bin/java
+      path: /usr/lib/jvm/jre-1.8.0-openjdk/bin/java
+      
+  - name: download required tomcat
+    get_url:
+      url: "{{ tomcaturl }}"
+      dest: /usr/local
+      
+  - name: extracting downloaded tomcat
+    unarchive:
+      src: "/usr/local/apache-tomcat-9.0.44.tar.gz"
+      dest: /usr/local
+      remote_src: yes
+      
+  - name: renaming tomcat home
+    command: mv /usr/local/apache-tomcat-9.0.44 /usr/local/latest
+      
+  - name: starting tom cat
+    shell: nohup /usr/local/latest/bin/startup.sh &
