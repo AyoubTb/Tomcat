@@ -1,6 +1,6 @@
 ---
 - name: install and configure Tomcat
-  hosts: sgabs_web_2
+  hosts: all
   gather_facts: false
   become: yes
  
